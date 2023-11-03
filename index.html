@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Chat</title>
+    <style>
+        #chat-container {
+            display: flex;
+            flex-direction: row-reverse;
+        }
+
+        #chat-messages {
+            flex: 2;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        #chat-input {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Chat</h1>
+
+    <div id="chat-container">
+        <div id="chat-messages">
+            <h2>Chat Messages</h2>
+            <ul id="messages"></ul>
+        </div>
+
+        <div id="chat-input">
+            <h2>Chat Input</h2>
+            <input id="messageInput" autocomplete="off" placeholder="Type a message..." />
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const socket = new WebSocket("ws://localhost:8080");
+
+        socket.addEventListener("open", (event) => {
+            console.log("Connected to WebSocket server");
+        });
+
+        socket.addEventListener("message", (event) => {
+            const messages = document.getElementById("messages");
+            const message = document.createElement("li");
+            message.textContent = event.data;
+            messages.appendChild(message);
+            console.log("Server Message: ", message);
+        });
+
+        const messageInput = document.getElementById("messageInput");
+        const sendButton = document.getElementById("sendButton");
+
+        sendButton.addEventListener("click", () => {
+            const message = messageInput.value;
+            socket.send(message);
+            messageInput.value = "";
+        });
+    </script>
+</body>
+</html>
